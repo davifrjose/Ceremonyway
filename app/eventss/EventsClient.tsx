@@ -7,6 +7,9 @@ import { SafeReservation, SafeUser } from "../types"
 import { useCallback, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import Button from "../components/Button";
+import { TbReportMoney } from "react-icons/tb";
+import useCheckoutModal from "../hooks/useCheckOut";
 
 interface EventsClientProps {
   reservations: SafeReservation[],
@@ -19,7 +22,11 @@ const EventsClient: React.FC<EventsClientProps> = ({
 }) => {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState('');
-
+  const useCheckOutkModal = useCheckoutModal();
+console.log(reservations)
+  const onRent = useCallback(() => {
+    useCheckOutkModal.onOpen()
+  },[currentUser, useCheckOutkModal]);
   const onCancel = useCallback((id: string) => {
     setDeletingId(id);
 
@@ -35,6 +42,8 @@ const EventsClient: React.FC<EventsClientProps> = ({
       setDeletingId('');
     })
   }, [router]);
+
+  
 
 
 
@@ -65,13 +74,36 @@ const EventsClient: React.FC<EventsClientProps> = ({
             actionId={reservation.id}
             onAction={onCancel}
             disabled={deletingId === reservation.id}
-            actionLabel="Cancel reservation"
+            actionLabel="Cancelar reserva"
             currentUser={currentUser}
           />
         ))}
       </div>
+      <div 
+      className="
+        fixed
+        z-90 
+        bottom-10 
+        right-8
+        
+        hover:animate-bounce 
+        duration-300
+        drop-shadow-lg 
+        flex 
+        justify-center 
+        items-center
+      ">
+      <Button
+        icon={TbReportMoney}
+        label="Custo total"
+        onClick={onRent}
+      /> 
+      </div>
     </Container>
+    
+    
   )
+  
 }
 
 export default EventsClient
