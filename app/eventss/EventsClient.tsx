@@ -3,30 +3,50 @@ import { useRouter } from "next/navigation"
 import Container from "../components/Conatiner"
 import Heading from "../components/Heading"
 import ListingCard from "../components/listings/ListingCard"
-import { SafeReservation, SafeUser } from "../types"
+import { SafeReservation, SafeUser, SafeListing } from "../types";
 import { useCallback, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Button from "../components/Button";
 import { TbReportMoney } from "react-icons/tb";
-import useCheckoutModal from "../hooks/useCheckOut";
+import Modal from "../components/models/Modal";
+import { format } from "date-fns";
+import Image from "next/image";
 
 interface EventsClientProps {
-  reservations: SafeReservation[],
-  currentUser?: SafeUser | null,
+ 
+  reservations: SafeReservation[];
+  currentUser?: SafeUser | null; 
+ 
 }
 
 const EventsClient: React.FC<EventsClientProps> = ({
   reservations,
-  currentUser
+  currentUser, 
+
 }) => {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState('');
-  const useCheckOutkModal = useCheckoutModal();
+  const [showModalCheckout, setShowModalCheckout] = useState(false)
+
+  let listing: any[] =  []
+  reservations.forEach((reservation: any) =>
+ 
+   listing.push(reservation.listing)
+) 
 console.log(reservations)
-  const onRent = useCallback(() => {
-    useCheckOutkModal.onOpen()
-  },[currentUser, useCheckOutkModal]);
+console.log(listing)
+  
+  const totalCheckout= ()=>{
+    let total = 0;
+   
+    reservations.forEach((el) => {
+      total += el.totalPrice;
+    });
+    return total
+  }
+
+
   const onCancel = useCallback((id: string) => {
     setDeletingId(id);
 
@@ -42,18 +62,59 @@ console.log(reservations)
       setDeletingId('');
     })
   }, [router]);
+  
+    const reservationDate =(startDate: any, endDate: any) => {
+      if (!startDate || !endDate) {
+        return null;
+      }
 
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      return `${format(start, "PP")} - ${format(end, "PP")}`;
+    }
   
 
+  const lisReservation = (data: any, price: any, title: any ) => (
+    <div className="flex row justify-between">
+      <div>
+        <p>{title}</p>
+        <p>{data}</p>
+      </div>
+      <div>
+        <p>{price} euros</p>
+      </div>
+    </div>
+  );
+   const bodyContent = (
+     <div className="flex flex-col content-around gap-4">
+       <div>
+         {reservations.map((reservation: any, index) =>
+           lisReservation(
+             reservationDate(reservation.startDate, reservation.endDate),
+              reservation.totalPrice,
+             listing[index].title
+           )
+         )}
+       </div>
+       <div className="flex row justify-between">
+         <div>
+           <h1>Total</h1>
+         </div>
+         <div>
+           <p>{totalCheckout()} euros</p>
+         </div>
+       </div>
+     </div>
+   );
 
-
-  return(
+  return (
     <Container>
       <Heading
         title="Eventos"
         subtitle="Onde você esteve e para onde está indo"
       />
-       <div 
+      <div
         className="
           mt-10
           grid 
@@ -66,7 +127,7 @@ console.log(reservations)
           gap-8
         "
       >
-         {reservations.map((reservation: any) => (
+        {reservations.map((reservation: any) => (
           <ListingCard
             key={reservation.id}
             data={reservation.listing}
@@ -79,8 +140,8 @@ console.log(reservations)
           />
         ))}
       </div>
-      <div 
-      className="
+      <div
+        className="
         fixed
         z-90 
         bottom-10 
@@ -92,17 +153,20 @@ console.log(reservations)
         flex 
         justify-center 
         items-center
-      ">
-      <Button
-        icon={TbReportMoney}
-        label="Custo total"
-        onClick={onRent}
-      /> 
+      "
+      >
+        <Button icon={TbReportMoney} label="Custo total" onClick={()=> setShowModalCheckout(true)} />
       </div>
+      <Modal
+        actionLabel="Finalize"
+        isOpen={showModalCheckout}
+        onClose={() => setShowModalCheckout(false)}
+        title="Total"
+        body={bodyContent}
+        onSubmit={() => setShowModalCheckout(false)}
+      />
     </Container>
-    
-    
-  )
+  );
   
 }
 

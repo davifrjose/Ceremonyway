@@ -27,7 +27,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
   const[isOpen,setIsOpen] = useState(false);
 
   const toggleOpen = useCallback(() => {
-    setIsOpen((value) => !isOpen);
+    setIsOpen((value) => !value);
   }, []);
 
   const onRent = useCallback(() => {
@@ -103,7 +103,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
             <>
             <MenuItem
               onClick={() => router.push('/eventss')}
-              label="Meus eventos"
+              label="Simulação"
             /> 
             <MenuItem
               onClick={() =>router.push('/favorites')}
@@ -114,8 +114,8 @@ const UserMenu: React.FC<UserMenuProps> = ({
               label="Minhas reservas"
             />
             <MenuItem
-              onClick={() =>{}}
-              label="Meus locais"
+              onClick={() =>router.push('/ideas')}
+              label="Ideias"
             />
             <MenuItem
               onClick={rentModal.onOpen}

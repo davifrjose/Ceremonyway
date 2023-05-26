@@ -57,6 +57,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
     if (!reservation) {
       return null;
     }
+
+ 
   
     const start = new Date(reservation.startDate);
     const end = new Date(reservation.endDate);
@@ -103,18 +105,19 @@ const ListingCard: React.FC<ListingCardProps> = ({
           </div>
         </div>
         <div className="font-semibold text-lg">
-           {location?.label}
+           {data.title}
         </div>
         <div className="font-light text-neutral-500">
           {reservationDate || data.category}
         </div>
         <div className="flex flex-row items-center gap-1">
+           {!reservation && (
+            <div className="font-light">Desde</div>
+          )}
           <div className="font-semibold">
           € {price}
           </div>
-          {!reservation && (
-            <div className="font-light">por pessoa</div>
-          )}
+         
         </div>
         {onAction && actionLabel && (
           <Button

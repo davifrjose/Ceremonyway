@@ -3,6 +3,7 @@ import ClientOnly from "@/app/components/ClientOnly";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import getReservations from "@/app/actions/getReservations";
+import getLitings from "@/app/actions/getListings"
 import EventsClient from "./EventsClient";
 
 const EventsPage = async () => {
@@ -18,9 +19,9 @@ const EventsPage = async () => {
       </ClientOnly>
     )
   }
-
   const reservations = await getReservations({ userId: currentUser.id });
-
+  
+console.log("kldsnmlkfmdlsmç")
   if (reservations.length === 0) {
     return (
       <ClientOnly>
@@ -35,6 +36,7 @@ const EventsPage = async () => {
   return (
     <ClientOnly>
       <EventsClient
+    
         reservations={reservations}
         currentUser={currentUser}
       />
