@@ -1,48 +1,45 @@
-'use client'
+"use client";
 
+import useLoginModalStore from "@/app/hooks/useLoginModal";
+import useRegisterModalStore from "@/app/hooks/useRegisterModal";
+import { useCallback, useState } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import Avatar from "../Avatar";
-import { useCallback, useState } from "react";
 import MenuItem from "./MenuItem";
-import useRegisterModalStore from "@/app/hooks/useRegisterModal";
-import useLoginModalStore from "@/app/hooks/useLoginModal";
 
-import { signOut } from "next-auth/react";
-import { SafeUser } from "@/app/types";
 import useRentModal from "@/app/hooks/useRentModal";
+import { SafeUser } from "@/app/types";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 interface UserMenuProps {
   currentUser?: SafeUser | null;
 }
 
-
-const UserMenu: React.FC<UserMenuProps> = ({
-  currentUser
-})=> {
-  const router = useRouter()
+const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
+  const router = useRouter();
   const registerModal = useRegisterModalStore();
   const loginModal = useLoginModalStore();
   const rentModal = useRentModal();
-  const[isOpen,setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const toggleOpen = useCallback(() => {
     setIsOpen((value) => !isOpen);
   }, []);
 
   const onRent = useCallback(() => {
-    if(!currentUser) {
-     return loginModal.onOpen()
+    if (!currentUser) {
+      return loginModal.onOpen();
     }
-    rentModal.onOpen()
-  },[currentUser, loginModal,rentModal]);
+    rentModal.onOpen();
+  }, [currentUser, loginModal, rentModal]);
 
-  return(
-   <div className="relative">
-    <div className="flex flex-row items-center gap-3">
-      <div
-        onClick={onRent}
-        className="
+  return (
+    <div className="relative">
+      <div className="flex flex-row items-center gap-3">
+        <div
+          onClick={onRent}
+          className="
           hidden
           md:block
           text-sm
@@ -54,12 +51,12 @@ const UserMenu: React.FC<UserMenuProps> = ({
           transition
           cursor-pointer
         "
-      >
+        >
           Ceremonyway o seu evento
-      </div>
-      <div
-        onClick={toggleOpen}
-        className="
+        </div>
+        <div
+          onClick={toggleOpen}
+          className="
         p-4
         md:py-1
         md:px-2
@@ -74,17 +71,17 @@ const UserMenu: React.FC<UserMenuProps> = ({
         hover:shadow-md
         transition
         "
-      >
-        <AiOutlineMenu />
-        <div className="hidden md:block">
-          <Avatar src = { currentUser?.image}/>
+        >
+          <AiOutlineMenu />
+          <div className="hidden md:block">
+            <Avatar src={currentUser?.image} />
+          </div>
         </div>
       </div>
-    </div>
 
-    {isOpen && (
-      <div
-        className="
+      {isOpen && (
+        <div
+          className="
           absolute
           rounded-xl
           shadow-md
@@ -97,56 +94,43 @@ const UserMenu: React.FC<UserMenuProps> = ({
           top-12
           text-sm
         "
-      >
-        <div className="flex flex-col cursor-pointer">
-          {currentUser ? (
-            <>
-            <MenuItem
-              onClick={() => router.push('/eventss')}
-              label="Meus eventos"
-            /> 
-            <MenuItem
-              onClick={() =>router.push('/favorites')}
-              label="Meus favoritos"
-            />
-            <MenuItem
-              onClick={() =>router.push('/reservations')}
-              label="Minhas reservas"
-            />
-            <MenuItem
-              onClick={() =>{}}
-              label="Meus locais"
-            />
-            <MenuItem
-              onClick={rentModal.onOpen}
-              label="Ceremonyway o seu evento"
-            />
-            <hr />
-            <MenuItem
-              onClick={() => signOut()}
-              label="Logout"
-            />
-          </>
-          ) : (
-          <>
-            <MenuItem
-              onClick={loginModal.onOpen}
-              label="Login"
-            /> 
-            <MenuItem
-              onClick={registerModal.onOpen}
-              label="Registar"
-            />
-          </>
-          )}
+        >
+          <div className="flex flex-col cursor-pointer">
+            {currentUser ? (
+              <>
+                <MenuItem
+                  onClick={() => router.push("/eventss")}
+                  label="Meus eventos"
+                />
+                <MenuItem
+                  onClick={() => router.push("/favorites")}
+                  label="Meus favoritos"
+                />
+                <MenuItem
+                  onClick={() => router.push("/reservations")}
+                  label="Minhas reservas"
+                />
+                <MenuItem onClick={() => {}} label="Meus locais" />
+                <MenuItem
+                  onClick={rentModal.onOpen}
+                  label="Ceremonyway o seu evento"
+                />
+                <MenuItem onClick={() => router.push("/forum")} label="Fórum" />
+                <hr />
+                <MenuItem onClick={() => signOut()} label="Logout" />
+              </>
+            ) : (
+              <>
+                <MenuItem onClick={loginModal.onOpen} label="Login" />
+                <MenuItem onClick={registerModal.onOpen} label="Registar" />
+              </>
+            )}
+          </div>
         </div>
-
-      </div>
-    
-    )}
-   </div>
+      )}
+    </div>
   );
-}
+};
 
 export default UserMenu;
 

@@ -23,6 +23,7 @@ model User {
   accounts       Account[]
   listings       Listing[]
   reservations   Reservation[]
+  forumQuestions ForumQuestions[]
 }
 
 model Account {
@@ -68,4 +69,12 @@ model Reservation {
   createdAt  DateTime @default(now())
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   listing    Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model ForumQuestions {
+  id String @id @default(cuid())
+  userId String
+  question String
+  date DateTime
+  user User @relation(fields: [userId], references: [id])
 }
