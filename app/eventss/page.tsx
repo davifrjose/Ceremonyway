@@ -3,7 +3,7 @@ import ClientOnly from "@/app/components/ClientOnly";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import getReservations from "@/app/actions/getReservations";
-import getLitings from "@/app/actions/getListings"
+
 import EventsClient from "./EventsClient";
 
 const EventsPage = async () => {
@@ -21,13 +21,13 @@ const EventsPage = async () => {
   }
   const reservations = await getReservations({ userId: currentUser.id });
   
-console.log("kldsnmlkfmdlsmç")
+
   if (reservations.length === 0) {
     return (
       <ClientOnly>
         <EmptyState
           title="Nenhuma evento encontrado"
-          subtitle="Parece que você não reservou nenhum evento."
+          subtitle="Parece que você não selecionou nenhuma opção."
         />
       </ClientOnly>
     );

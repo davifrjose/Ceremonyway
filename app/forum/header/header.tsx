@@ -20,6 +20,7 @@ export const ForumHeader = () => {
 
       return;
     }
+    console.log()
   };
 
   return (

@@ -37,6 +37,7 @@ const Home = async ({ searchParams } : HomeProps) => {
           "
         > 
         {listings.map((listing) => {
+          
           return(
             <ListingCard
               currentUser={currentUser} 

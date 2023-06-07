@@ -25,8 +25,8 @@ const ReservationsPage = async () =>{
     return (
       <ClientOnly>
         <EmptyState
-          title="Nenhuma reserva encontrada"
-          subtitle="Parece que você não tem reservas nos seus eventos."
+          title="Nenhuma sumulação encontrada"
+          subtitle="Parece que você não tem nehuma simulação feita."
         />
       </ClientOnly>
     );
@@ -45,4 +45,5 @@ const ReservationsPage = async () =>{
 
 
 }
+
 export default ReservationsPage;

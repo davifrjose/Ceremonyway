@@ -155,7 +155,7 @@ console.log(listing)
         items-center
       "
       >
-        <Button icon={TbReportMoney} label="Custo total" onClick={()=> setShowModalCheckout(true)} />
+        <Button  label="Custo total" onClick={()=> setShowModalCheckout(true)} />
       </div>
       <Modal
         actionLabel="Finalize"

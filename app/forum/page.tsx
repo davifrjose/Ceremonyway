@@ -19,7 +19,7 @@ export default function Forum() {
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-gray-900">
                   <a href="#" className="hover:underline">
-                    Chelsea Hagon
+                    Ana
                   </a>
                 </p>
                 <p className="text-sm text-gray-500">
@@ -34,10 +34,7 @@ export default function Forum() {
 
           <div>
             <p className="mt-2 text-sm">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eaque
-              voluptatem deserunt ab reiciendis! Perferendis sit delectus neque
-              magnam, nisi accusantium consectetur corporis labore repellendus
-              aliquid incidunt, aspernatur iure. Provident, esse?
+            Boa noite. Gostaria de saber, mais ou menos quanto tempo demora a noiva para se preparar..cabelo make vestir etc. Obrigada desde já
             </p>
           </div>
         </div>
