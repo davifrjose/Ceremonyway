@@ -12,70 +12,120 @@ import { TbReportMoney } from "react-icons/tb";
 import Modal from "../components/models/Modal";
 import { format } from "date-fns";
 import Image from "next/image";
+import useRegisterModalStore from "../hooks/useRegisterModal";
+import useLoginModalStore from "../hooks/useLoginModal";
+import useRentModal from "../hooks/useRentModal";
+import useSimulationModal from "../hooks/useSimulateModal";
+import useSimulationListingsModal from "../hooks/useSimulationListings";
+
 
 interface EventsClientProps {
- 
+
   reservations: SafeReservation[];
-  currentUser?: SafeUser | null; 
- 
+  currentUser?: SafeUser | null;
+
 }
 
 const EventsClient: React.FC<EventsClientProps> = ({
   reservations,
-  currentUser, 
+  currentUser,
 
 }) => {
   const router = useRouter();
-  const [deletingId, setDeletingId] = useState('');
-  const [showModalCheckout, setShowModalCheckout] = useState(false)
 
-  let listing: any[] =  []
+  const [deletingId, setDeletingId] = useState('');
+  const registerModal = useRegisterModalStore();
+  const loginModal = useLoginModalStore();
+  const rentModal = useRentModal();
+  const simulationModal = useSimulationModal();
+  const [isOpen, setIsOpen] = useState(false);
+  const [showModalCheckout, setShowModalCheckout] = useState(false)
+  const simulationListing = useSimulationListingsModal();
+  console.log(simulationListing.items, "dfdf")
+
+
+
+  // open dialog box to save simulation information
+
+  const toggleOpen = useCallback(() => {
+    setIsOpen((value) => !value);
+  }, []);
+  const onSimulate = useCallback(() => {
+    if (!currentUser) {
+      return loginModal.onOpen();
+    }
+    simulationModal.onOpen();
+  }, [currentUser, loginModal, simulationModal]);
+
+
+  let listing: any[] = []
   reservations.forEach((reservation: any) =>
- 
-   listing.push(reservation.listing)
-) 
-console.log(reservations)
-console.log(listing)
-  
-  const totalCheckout= ()=>{
+
+    listing.push(reservation.listing)
+  )
+  console.log(reservations)
+  console.log(listing)
+
+
+  const totalCheckout = () => {
     let total = 0;
-   
-    reservations.forEach((el) => {
+
+    simulationListing.items.forEach((el) => {
       total += el.totalPrice;
     });
     return total
   }
 
+  const getListingIds = () => {
+
+    const listingIds: string[] = [];
+
+    reservations.forEach((el) => {
+      const listeningId: string = addListingIds(el.listingId);
+      listingIds.push(listeningId)
+    });
+    return listingIds;
+  }
+
+  const addListingIds = (id: string) => {
+
+    const listeningId: string = id;
+    return listeningId;
+
+  }
+  console.log(getListingIds())
 
   const onCancel = useCallback((id: string) => {
-    setDeletingId(id);
-
-    axios.delete(`/api/reservations/${id}`)
-    .then(() => {
-      toast.success('Reserva cancelada');
-      router.refresh();
-    })
-    .catch((error) => {
-      toast.error(error?.response?.data?.error)
-    })
-    .finally(() => {
-      setDeletingId('');
-    })
+    console.log(id, "78tuyghbhijmnokl,pç");
+    simulationListing.remove(id);
+    toast.success('Removido com sucesso');
+    // router.refresh();
+    
   }, [router]);
-  
-    const reservationDate =(startDate: any, endDate: any) => {
-      if (!startDate || !endDate) {
-        return null;
-      }
 
-      const start = new Date(startDate);
-      const end = new Date(endDate);
+  const onCreate = () => {
+    
+    setShowModalCheckout(false);
+    simulationModal.onOpen();
+    simulationModal.addListeningId(getListingIds());
+    
+    
+  }
 
-      return `${format(start, "PP")} - ${format(end, "PP")}`;
+  const reservationDate = (startDate: any, endDate: any) => {
+    if (!startDate || !endDate) {
+      return null;
     }
-  
 
-  const lisReservation = (data: any, price: any, title: any ) => (
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    return `${format(start, "PP")} - ${format(end, "PP")}`;
+  }
+
+
+
+  const lisReservation = (data: any, price: any, title: any) => (
     <div className="flex row justify-between">
       <div>
         <p>{title}</p>
@@ -86,27 +136,27 @@ console.log(listing)
       </div>
     </div>
   );
-   const bodyContent = (
-     <div className="flex flex-col content-around gap-4">
-       <div>
-         {reservations.map((reservation: any, index) =>
-           lisReservation(
-             reservationDate(reservation.startDate, reservation.endDate),
-              reservation.totalPrice,
-             listing[index].title
-           )
-         )}
-       </div>
-       <div className="flex row justify-between">
-         <div>
-           <h1>Total</h1>
-         </div>
-         <div>
-           <p>{totalCheckout()} euros</p>
-         </div>
-       </div>
-     </div>
-   );
+  const bodyContent = (
+    <div className="flex flex-col content-around gap-4">
+      <div>
+        {simulationListing.items.map((reservation, index) =>
+          lisReservation(
+            reservationDate(reservation.startDate, reservation.endDate),
+            reservation.totalPrice,
+            reservation.listing.title
+          )
+        )}
+      </div>
+      <div className="flex row justify-between">
+        <div>
+          <h1>Total</h1>
+        </div>
+        <div>
+          <p>{totalCheckout()} euros</p>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <Container>
@@ -127,15 +177,15 @@ console.log(listing)
           gap-8
         "
       >
-        {reservations.map((reservation: any) => (
+        {simulationListing.items.map((reservation) => (
           <ListingCard
-            key={reservation.id}
+            key={reservation.listing.id}
             data={reservation.listing}
             reservation={reservation}
-            actionId={reservation.id}
-            onAction={onCancel}
-            disabled={deletingId === reservation.id}
-            actionLabel="Cancelar reserva"
+            actionId={reservation.listing.id}
+            onAction={() =>onCancel(reservation.listing.id)}
+            disabled={deletingId === reservation.listing.id}
+            actionLabel="Remover"
             currentUser={currentUser}
           />
         ))}
@@ -155,19 +205,21 @@ console.log(listing)
         items-center
       "
       >
-        <Button  label="Custo total" onClick={()=> setShowModalCheckout(true)} />
+        <Button label="Custo total" onClick={() => setShowModalCheckout(true)} />
       </div>
       <Modal
-        actionLabel="Finalize"
+        actionLabel="Salvar simulação"
         isOpen={showModalCheckout}
         onClose={() => setShowModalCheckout(false)}
         title="Total"
         body={bodyContent}
-        onSubmit={() => setShowModalCheckout(false)}
+        onSubmit={onCreate}
       />
+
+
     </Container>
   );
-  
+
 }
 
 export default EventsClient

@@ -14,5 +14,5 @@ import config from '../../../sanity.config'
 
 export default async function StudioPage() {
   return <h1>Studio</h1>
-  // return <NextStudio config={config} />
+   //return <NextStudio config={config} />
 }

@@ -86,6 +86,7 @@ const RegisterModal = () => {
           id="password"
           label='Password'
           type="password"
+          password
           disabled={isLoading}
           register={register}
           errors={errors}

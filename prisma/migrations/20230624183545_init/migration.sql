@@ -48,26 +48,39 @@ CREATE TABLE "Listing" (
 );
 
 -- CreateTable
-CREATE TABLE "Reservation" (
+CREATE TABLE "ForumQuestions" (
     "id" TEXT NOT NULL,
+    "question" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "listingId" TEXT NOT NULL,
-    "startDate" TIMESTAMP(3) NOT NULL,
-    "endDate" TIMESTAMP(3) NOT NULL,
-    "totalPrice" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Reservation_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "ForumQuestions_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "ForumQuestions" (
+CREATE TABLE "Simulation" (
     "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "question" TEXT NOT NULL,
-    "date" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "startDate" TIMESTAMP(3) NOT NULL,
+    "endDate" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "ForumQuestions_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Simulation_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "SimulationListings" (
+    "id" TEXT NOT NULL,
+    "listingId" TEXT NOT NULL,
+    "simulationId" TEXT NOT NULL,
+    "listeingQty" INTEGER NOT NULL,
+    "startDate" TIMESTAMP(3) NOT NULL,
+    "endDate" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "SimulationListings_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -83,10 +96,13 @@ ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Listing" ADD CONSTRAINT "Listing_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Reservation" ADD CONSTRAINT "Reservation_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Reservation" ADD CONSTRAINT "Reservation_listingId_fkey" FOREIGN KEY ("listingId") REFERENCES "Listing"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "ForumQuestions" ADD CONSTRAINT "ForumQuestions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Simulation" ADD CONSTRAINT "Simulation_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SimulationListings" ADD CONSTRAINT "SimulationListings_listingId_fkey" FOREIGN KEY ("listingId") REFERENCES "Listing"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SimulationListings" ADD CONSTRAINT "SimulationListings_simulationId_fkey" FOREIGN KEY ("simulationId") REFERENCES "Simulation"("id") ON DELETE CASCADE ON UPDATE CASCADE;

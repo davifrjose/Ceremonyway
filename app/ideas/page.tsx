@@ -4,6 +4,9 @@ import { client } from "../libs/sanity.client"
 import PreviewSuspense from "../components/sanity/PreviewSuspense"
 import PreviewBlogList from "../components/sanity/PreviewBlogList"
 import BlogList from "../components/sanity/BlogList"
+import getCurrentUser from "../actions/getCurrentUser"
+import ClientOnly from "../components/ClientOnly"
+import EmptyState from "../components/EmptyState"
 const query = groq`
 *[_type=="post"] {
   ...,
@@ -14,6 +17,19 @@ const query = groq`
 
 
 export default async function IdeaHomePage() {
+
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) {
+    return (
+      <ClientOnly> 
+        <EmptyState
+          title="Não autorizado"
+          subtitle="Por favor faça login"
+        />
+      </ClientOnly>
+    )
+  }
 
   if (previewData()) {
     <PreviewSuspense

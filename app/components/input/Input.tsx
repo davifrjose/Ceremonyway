@@ -1,7 +1,9 @@
 'use client'
 
+import { useState } from "react";
 import { Field, FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
 import { BiEuro } from "react-icons/bi";
+import { HiEye, HiEyeOff } from "react-icons/hi"
 
 interface InputProps{
   id: string;
@@ -10,19 +12,38 @@ interface InputProps{
   disabled?: boolean;
   formatPrice?: boolean;
   required?: boolean;
+  password?:boolean;
   register: UseFormRegister<FieldValues>
   errors: FieldErrors
 }
 const Input: React.FC<InputProps> = ({
   id,
   label,
-  type = 'text',
+  type = 'text' || 'password',
   disabled,
   formatPrice,
   required,
+  password,
   register,
-  errors
+  errors,
 }) => {
+  const [showPassword, setShowPassword] = useState(false);
+  
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+ const getInputType = () => {
+    if (password) {
+      return showPassword ? "text": "password"
+    }
+    
+
+
+    return type;
+  };
+
+
   return(
     <div className="w-full relative">
       {formatPrice && (
@@ -41,7 +62,7 @@ const Input: React.FC<InputProps> = ({
         disabled={disabled}
         {...register(id, { required })}
         placeholder=" "
-        typeof={type}
+        typeof={getInputType()}
         className={
           `
             peer
@@ -60,8 +81,32 @@ const Input: React.FC<InputProps> = ({
             ${errors[id] ? 'border-purple-600': 'border-neutral-300'}
             ${errors[id]? 'focus:border-purple-600': 'focus:border-black'}
           `} 
+          type={getInputType()}
       />
-      <label 
+      { password && (
+        <button
+          type="button"
+          onClick={handleTogglePassword}
+          className={`
+            absolute
+            top-5
+            right-4
+            flex
+            items-center
+            justify-center
+            h-8
+            w-8
+            rounded-md
+            transition
+            focus:outline-none
+            ${showPassword ? 'text-blue-500' : 'text-neutral-500'}
+          `}
+        >
+          {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} />}
+        </button>
+      )}
+      <label
+        
         className={`
           absolute
           text-md

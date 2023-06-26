@@ -2,12 +2,14 @@ import EmptyState from "@/app/components/EmptyState";
 import ClientOnly from "@/app/components/ClientOnly";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
-import getReservations from "@/app/actions/getReservations";
-import ReservationsClient from "./ReservationsClient";
+import getSimulations from "../actions/getSimulations";
 
-const ReservationsPage = async () =>{
+import SimulationsClient from "./SimulationsClient";
+import getAllSimulationListings from "../actions/getSimulationListings";
+
+const SimulationsPage = async () =>{
   const currentUser = await getCurrentUser();
-
+  
   if (!currentUser) {
     return (
       <ClientOnly> 
@@ -18,10 +20,11 @@ const ReservationsPage = async () =>{
       </ClientOnly>
     )
   }
-
-  const reservations = await getReservations({ authorId: currentUser.id });
-
-  if (reservations.length === 0) {
+  const simulations = await getSimulations({ authorId: currentUser.id });
+  const simulationListing = await getAllSimulationListings();
+  
+  
+  if (simulations.length === 0) {
     return (
       <ClientOnly>
         <EmptyState
@@ -33,10 +36,13 @@ const ReservationsPage = async () =>{
   }
 
   return (
+    
     <ClientOnly>
-      <ReservationsClient
-        reservations={reservations}
-        currentUser={currentUser}
+      <SimulationsClient 
+      simulations={simulations}
+      currentUser={currentUser}
+      simulationListing={simulationListing}
+      
       />
     </ClientOnly>
   );
@@ -46,4 +52,4 @@ const ReservationsPage = async () =>{
 
 }
 
-export default ReservationsPage;
+export default SimulationsPage;

@@ -199,7 +199,7 @@ const RentModal = () => {
       <div className="flex flex-col gap-8">
         <Heading
           title="Como você descreveria seu lugar?"
-          subtitle="Short and sweet works best!"
+          subtitle="Seja curto e objectivo!"
         />
         <Input
           id="title"

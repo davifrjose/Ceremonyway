@@ -11,14 +11,23 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
+  const {
+    question
+  } = body;
 
+  if (body){
+    console.log(body)
+  }
+  try {
   const forum = await prisma.forumQuestions.create({
     data: {
-      question: body.question,
-      date: new Date(),
+      question,
       userId: currentUser.id,
     },
   });
 
   return NextResponse.json(forum);
+} catch(err) {
+  console.log(err)
+}
 }

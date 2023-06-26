@@ -2,25 +2,54 @@
 
 import Modal from "@/app/components/models/Modal";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 export const ForumHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const questionRef = useRef<HTMLTextAreaElement>(null);
+  
+
+
 
   const [question, setQuestion] = useState("");
 
-  const handleCreateNew = () => {
-    if (!question) {
-      questionRef.current?.focus();
-
-      axios.post("/api/forum", {
-        question,
-      });
-
-      return;
+  const {
+    register,
+    handleSubmit,
+    formState: {
+      errors,
+    },
+    reset,
+  } = useForm<FieldValues>({
+    defaultValues: {
+      question: '',
     }
-    console.log()
+  });
+  
+let questionElement: HTMLTextAreaElement | null = null;
+const router = useRouter();
+
+  const handleCreateNew: SubmitHandler<FieldValues> = (data) => {
+    console.log(data)
+    
+    if (questionElement) {
+      questionElement.focus();
+    }
+      axios.post("/api/forum", data).then(() => {
+      toast.success('Pergunta criada com sucesso!');
+      setQuestion(""); 
+      setIsOpen(false)
+      router.refresh();
+
+      
+      })
+      .catch(() => {
+        toast.error('Algo deu errado.');
+      })
+    
+    
   };
 
   return (
@@ -44,18 +73,19 @@ export const ForumHeader = () => {
         isOpen={isOpen}
         title="Nova pergunta no fórum"
         actionLabel="Salvar"
-        onSubmit={handleCreateNew}
+        onSubmit={handleSubmit(handleCreateNew)}
         onClose={() => setIsOpen(false)}
       >
-        <form>
+        <form onSubmit={handleSubmit(handleCreateNew)}>
           <div className="flex flex-col gap-2">
             <label htmlFor="question">Pergunta *</label>
             <textarea
-              ref={questionRef}
-              title="add new forum"
+            {...register('question')}
               value={question}
+              title="add new forum"
+              
               onChange={(event) => setQuestion(event.target.value)}
-              name="message"
+              name="question"
               id="question"
               rows={4}
               className="block w-full rounded-md border-0 px-3.5 py-2 
@@ -65,6 +95,7 @@ export const ForumHeader = () => {
               defaultValue={""}
             />
           </div>
+          
         </form>
       </Modal>
     </>

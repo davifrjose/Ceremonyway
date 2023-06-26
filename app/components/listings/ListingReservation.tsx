@@ -58,7 +58,7 @@ const ListingReservation: React.FC<
       <div className="p-4">
         <Button 
           disabled={disabled} 
-          label="Reservar" 
+          label="Adicionar a simulação" 
           onClick={onSubmit}
         />
       </div>

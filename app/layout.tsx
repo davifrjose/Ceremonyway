@@ -1,4 +1,4 @@
-import getReservations from "@/app/actions/getReservations";
+
 import { Nunito } from "next/font/google";
 import getCurrentUser from "./actions/getCurrentUser";
 import ClientOnly from "./components/ClientOnly";
@@ -10,6 +10,7 @@ import CheckOutModal from "./components/models/checkoutModal";
 import Navbar from "./components/navbar/Navbar";
 import "./globals.css";
 import ToasterProvider from "./providers/ToasterProvider";
+import SimulationModal from "./components/models/SimulationModal";
 
 export const metadata = {
   title: "Ceremonyway",
@@ -24,17 +25,18 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const currentUser = await getCurrentUser();
-  const reservations = await getReservations({ userId: currentUser?.id });
+  
   return (
     <html lang="en">
       <body className={font.className}>
         <ClientOnly>
           <ToasterProvider />
+          <SimulationModal />
           <SearchModal />
           <RentModal />
           <LoginModal />
           <RegisterModal />
-          <CheckOutModal reservations={reservations} />
+          
           <Navbar currentUser={currentUser} />
         </ClientOnly>
         <div className="pb-20 pt-28">{children}</div>

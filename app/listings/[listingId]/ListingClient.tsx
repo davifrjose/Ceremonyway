@@ -6,8 +6,9 @@ import ListingReservation from "@/app/components/listings/ListingReservation";
 
 import { categories } from "@/app/components/navbar/Categories";
 import useLoginModal from "@/app/hooks/useLoginModal";
+import useSimulationListingsModal from "@/app/hooks/useSimulationListings";
 import { SafeListing, SafeReservation, SafeUser } from "@/app/types";
-import { Reservation } from "@prisma/client";
+
 import axios from "axios";
 import { differenceInCalendarDays,  eachDayOfInterval } from "date-fns";
 import { useRouter } from "next/navigation";
@@ -55,32 +56,24 @@ const ListingClient: React.FC<ListingClientProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [totalPrice, setTotalPrice] = useState(listing.price);
   const [dateRange, setDateRange] = useState<Range>(initialDateRange);
+  const simulationListing = useSimulationListingsModal();
 
   const onCreateReservation = useCallback(() => {
     if (!currentUser) {
       return loginModal.onOpen();
     }
     setIsLoading(true);
+    simulationListing.add({
+      startDate: dateRange?.startDate!,
+      endDate: dateRange?.endDate!,
+      listing: listing,
+      totalPrice
+    })
+    setIsLoading(false);
 
-    axios.post('/api/reservations', {
-      totalPrice,
-      startDate: dateRange.startDate,
-      endDate: dateRange.endDate,
-      listingId: listing?.id
-    })
-    .then(() => {
-      toast.success('Listagem reservada!');
-      setDateRange(initialDateRange);
+    router.push('/eventss');
 
-      
-      router.push('/eventss');
-    })
-    .catch(() => {
-      toast.error('Algo deu errado.');
-    })
-    .finally(() => {
-      setIsLoading(false);
-    })
+    toast.success('Listagem reservada!');
 },
 [
   totalPrice, 
@@ -99,7 +92,7 @@ useEffect(() => {
     );
     
     if (dayCount && listing.price) {
-      setTotalPrice(dayCount * listing.price);
+      setTotalPrice((dayCount + 1) * listing.price);
     } else {
       setTotalPrice(listing.price);
     }
